@@ -115,7 +115,7 @@ void main()
 	vec2 mpos = uMousePos.xy / uResolution.y;
     
     mat3 rotY = rotationY(-mpos.x * sensitivity);
-    mat3 rotX = rotationX((mpos.y - 0.5) * sensitivity);
+    mat3 rotX = rotationX(mpos.y * sensitivity);
     
     vec3 ro = rotY * rotX * vec3(0, 0, -2.0);
     vec3 rd = rotY * rotX * normalize(vec3(uv.x, uv.y, 1));

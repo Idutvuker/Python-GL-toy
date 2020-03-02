@@ -29,7 +29,13 @@ class Application:
 		glViewport(0, 0, w, h)
 
 	def _on_mouse_move(self, window, x, y):
-		self.program.set_uniform(b'uMousePos', vec2(x, self.height - y))
+		mpos = vec2(x, self.height - y)
+		diff = mpos - self.prev_mpos
+		self.prev_mpos = mpos
+
+		if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+			self.u_mpos += diff
+			self.program.set_uniform(b'uMousePos', self.u_mpos)
 
 	def __init__(self, width, height):
 		if not glfw.init():
@@ -47,6 +53,9 @@ class Application:
 
 		self.program = init_program()
 		self._on_resize(self.window, width, height)
+
+		self.prev_mpos = vec2(0, 0)
+		self.u_mpos = vec2(0, 0)
 
 
 	def __del__(self):

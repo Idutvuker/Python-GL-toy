@@ -4,6 +4,9 @@ from glm import *
 import sys
 
 class Program:
+	def use(self):
+		glUseProgram(self.program)
+
 	def set_uniform(self, uname, value):
 		loc = self._uniforms.get(uname, -1)
 		if loc != -1:
@@ -18,7 +21,11 @@ class Program:
 			if utype is ivec3: return glUniform3iv(loc, 1, value_ptr(value))
 			if utype is ivec4: return glUniform4iv(loc, 1, value_ptr(value))
 
-			print("Type is not supported!", file=sys.stderr)
+			if utype is mat2: return glUniformMatrix2fv(loc, 1, False, value_ptr(value))
+			if utype is mat3: return glUniformMatrix3fv(loc, 1, False, value_ptr(value))
+			if utype is mat4: return glUniformMatrix4fv(loc, 1, False, value_ptr(value))
+
+			print("Type %s is not supported!" % utype, file=sys.stderr)
 
 
 	def _get_uniform_map(self):
