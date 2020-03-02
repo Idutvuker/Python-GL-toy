@@ -7,9 +7,9 @@ uniform ivec2 uResolution;
 
 const float iTime = 0.0;
 
-const int MAX_STEPS = 1000;
+const int MAX_STEPS = 70;
 const float MAX_DIST = 1000.0;
-const float MIN_DIST = 0.01;
+const float MIN_DIST = 0.0001;
 
 const vec3 spPos = vec3(0, 0, 0);
 const float spRad = 0.5;
@@ -25,7 +25,7 @@ float getDist2(vec3 p)
     return max(spDist, -spDist2);
 }
 
-float getDist(vec3 z)
+float getDist(vec3 z, float pixsize)
 {
     float Scale = 2.0;
     
@@ -37,7 +37,7 @@ float getDist(vec3 z)
 	int n = 0;
 	float dist, d;
  
-	while (n < 10)
+	while (n < 15)
     {
         c = a1;
         dist = length(z-a1);
@@ -48,27 +48,34 @@ float getDist(vec3 z)
         n++;
 	}
 
-	return length(z) * pow(Scale, float(-n) - 0.5);
+	return length(z) * pow(Scale, float(-n)) - pixsize;
 }
 
 
 
-float rayMarch(vec3 ro, vec3 rd, int samples)
+float rayMarch(vec3 ro, vec3 rd, int samples, out int it)
 {
 	float dO = 0.0;
-    
+ 
+	bool flag = false;
     for (int i = 0; i < samples; i++)
     {
         vec3 p = ro + rd * dO;
-        float ds = getDist(p);
+        float ds = getDist(p, 1.0 / (uResolution.x + uResolution.y) * distance(p, ro));
         dO += ds;
-        if (dO > MAX_DIST || ds < MIN_DIST) break;
+        if (dO > MAX_DIST || ds < MIN_DIST) {
+			it = i;
+			flag = true;
+			break;
+		}
     }
-    
+	if (!flag)
+    	it = samples;
+	
     return dO;
 }
 
-vec3 getNormal(vec3 p)
+/*vec3 getNormal(vec3 p)
 {
     const float e = 0.005;
     float d = getDist(p);
@@ -88,13 +95,13 @@ float getLight(vec3 p)
     
     float res = max(0.0, dot(lv, norm));
     
-    float d = rayMarch(p + norm * MIN_DIST * 2.0, lv, 500);
+    float d = 0;//rayMarch(p + norm * MIN_DIST * 2.0, lv, 500);
     float td = length(lightPos - p);
     if (d < td)
     	res *= d/td;
     
     return res;
-}
+}*/
 
 mat3 rotationY( in float angle ) {
 	return mat3(	cos(angle),		0,		sin(angle),
@@ -117,12 +124,18 @@ void main()
     mat3 rotY = rotationY(-mpos.x * sensitivity);
     mat3 rotX = rotationX(mpos.y * sensitivity);
     
-    vec3 ro = rotY * rotX * vec3(0, 0, -2.0);
+    vec3 ro = rotY * rotX * vec3(0, 0, -3.);
     vec3 rd = rotY * rotX * normalize(vec3(uv.x, uv.y, 1));
     
-    float d = rayMarch(ro, rd, MAX_STEPS);
+	int it = 0;
+    float d = rayMarch(ro, rd, MAX_STEPS, it);
     vec3 p = ro + rd * d;
     
-    vec3 col = getNormal(p);
+	float c = 1.0 - float(it) / float(MAX_STEPS);
+	if (it == 0)
+		c = 0.0;
+	
+	vec3 col = vec3(c);
+    //vec3 col = getNormal(p);
     FragColor = vec4(col, 1.0);
 }
