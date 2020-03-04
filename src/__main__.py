@@ -34,8 +34,8 @@ class Application:
 		self.prev_mpos = mpos
 
 		if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
-			self.u_mpos += diff
-			self.program.set_uniform(b'uMousePos', self.u_mpos)
+			self.mvel += 3.0 * diff
+
 
 	def __init__(self, width, height):
 		if not glfw.init():
@@ -43,11 +43,12 @@ class Application:
 		self.window = glfw.create_window(width, height, "My OpenGL window", None, None)
 
 		if not self.window:
-			glfw.terminate()
 			raise Exception("glfw window can not be created!")
 
 		glfw.set_window_pos(self.window, 50, 50)
 		glfw.make_context_current(self.window)
+		glfw.swap_interval(0)
+
 		glfw.set_window_size_callback(self.window, self._on_resize)
 		glfw.set_cursor_pos_callback(self.window, self._on_mouse_move)
 
@@ -56,6 +57,9 @@ class Application:
 
 		self.prev_mpos = vec2(0, 0)
 		self.u_mpos = vec2(0, 0)
+
+		self.prev_time = glfw.get_time()
+		self.mvel = vec2(0, 0)
 
 
 	def __del__(self):
@@ -66,13 +70,24 @@ class Application:
 		glClearColor(0, 1, 0, 0)
 
 		while not glfw.window_should_close(self.window):
+			cur_time = glfw.get_time()
+			elapsed = cur_time - self.prev_time
+			self.prev_time = cur_time
+
 			glfw.poll_events()
+			self._process(elapsed)
 
 			glClear(GL_COLOR_BUFFER_BIT)
 			self._draw()
 
 			glfw.swap_buffers(self.window)
 
+	def _process(self, delta):
+		self.u_mpos += self.mvel * delta
+		self.program.set_uniform(b'uMousePos', self.u_mpos)
+
+		x = pow(0.03, delta)
+		self.mvel *= x
 
 def include_str(path):
 	with open(path, 'r') as file:
