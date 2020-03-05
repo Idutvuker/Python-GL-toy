@@ -5,7 +5,7 @@ out vec4 FragColor;
 uniform vec2 uMousePos;
 uniform ivec2 uResolution;
 uniform float uZoom = 1.0;
-
+uniform float uAlpha = 2000.0;
 
 const float iTime = 0.0;
 
@@ -39,7 +39,7 @@ float getDist(vec3 z, float pixsize)
 	int n = 0;
 	float dist, d;
  
-	while (n < 15)
+	while (n < 11)
     {
         c = a1;
         dist = length(z-a1);
@@ -63,7 +63,7 @@ float rayMarch(vec3 ro, vec3 rd, int samples, out int it)
     for (int i = 0; i < samples; i++)
     {
         vec3 p = ro + rd * dO;
-        float ds = getDist(p, 1.0 / (uResolution.x + uResolution.y) * distance(p, ro));
+        float ds = getDist(p, 1.0 / (uAlpha) * distance(p, ro));
         dO += ds;
         if (dO > MAX_DIST || ds < MIN_DIST) {
 			it = i;

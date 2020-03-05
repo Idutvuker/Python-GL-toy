@@ -71,6 +71,7 @@ class Application:
 		self.mvel = vec2(0, 0)
 
 		self.u_zoom = 1.0
+		self.u_alpha = 2000.0
 
 
 	def __del__(self):
@@ -110,13 +111,18 @@ class Application:
 			# imgui.show_test_window()
 
 			imgui.set_next_window_position(0, 0)
-			imgui.set_next_window_size(200, 60)
+			imgui.set_next_window_size(200, 120)
 
 			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
 
 			changed, self.u_zoom = imgui.slider_float("Zoom", self.u_zoom, 1.0, 20.0)
 			if changed:
 				self.program.set_uniform(b'uZoom', self.u_zoom)
+
+			changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, 50.0, 5000.0)
+			if changed:
+				self.program.set_uniform(b'uAlpha', self.u_alpha)
+
 
 			imgui.end()
 
