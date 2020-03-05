@@ -4,6 +4,8 @@ out vec4 FragColor;
 
 uniform vec2 uMousePos;
 uniform ivec2 uResolution;
+uniform float uZoom = 1.0;
+
 
 const float iTime = 0.0;
 
@@ -124,8 +126,8 @@ void main()
     mat3 rotY = rotationY(-mpos.x * sensitivity);
     mat3 rotX = rotationX(mpos.y * sensitivity);
     
-    vec3 ro = rotY * rotX * vec3(0, 0, -3.);
-    vec3 rd = rotY * rotX * normalize(vec3(uv.x, uv.y, 1));
+    vec3 ro = rotY * rotX * vec3(0, 0, -3.5);
+    vec3 rd = rotY * rotX * normalize(vec3(uv.x, uv.y, uZoom));
     
 	int it = 0;
     float d = rayMarch(ro, rd, MAX_STEPS, it);

@@ -13,6 +13,8 @@ class Program:
 			glUseProgram(self.program)
 			utype = type(value)
 
+			if utype is float: return glUniform1f(loc, value)
+
 			if utype is vec2: return glUniform2fv(loc, 1, value_ptr(value))
 			if utype is vec3: return glUniform3fv(loc, 1, value_ptr(value))
 			if utype is vec4: return glUniform4fv(loc, 1, value_ptr(value))

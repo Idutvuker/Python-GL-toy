@@ -1,9 +1,10 @@
-import os
-
 import glfw
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileShader
 from glm import *
+
+import imgui
+from imgui.integrations.glfw import GlfwRenderer
 
 from src.common import Program
 
@@ -33,11 +34,11 @@ class Application:
 		diff = mpos - self.prev_mpos
 		self.prev_mpos = mpos
 
-		if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+		if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS and not imgui.get_io().want_capture_mouse:
 			self.mvel += 3.0 * diff
 
 
-	def __init__(self, width, height):
+	def _init_window(self, width, height):
 		if not glfw.init():
 			raise Exception("glfw can not be initialized!")
 		self.window = glfw.create_window(width, height, "My OpenGL window", None, None)
@@ -52,6 +53,14 @@ class Application:
 		glfw.set_window_size_callback(self.window, self._on_resize)
 		glfw.set_cursor_pos_callback(self.window, self._on_mouse_move)
 
+		imgui.create_context()
+		self.impl = GlfwRenderer(self.window, False)
+
+
+
+	def __init__(self, width, height):
+		self._init_window(width, height)
+
 		self.program = init_program()
 		self._on_resize(self.window, width, height)
 
@@ -61,10 +70,14 @@ class Application:
 		self.prev_time = glfw.get_time()
 		self.mvel = vec2(0, 0)
 
+		self.u_zoom = 1.0
+
 
 	def __del__(self):
 		del self.program
+		self.impl.shutdown()
 		glfw.terminate()
+
 
 	def start(self):
 		glClearColor(0, 1, 0, 0)
@@ -75,12 +88,48 @@ class Application:
 			self.prev_time = cur_time
 
 			glfw.poll_events()
+			self.impl.process_inputs()
+
 			self._process(elapsed)
+
+			imgui.new_frame()
+
+			# if imgui.begin_main_menu_bar():
+			# 	if imgui.begin_menu("File", True):
+			#
+			# 		clicked_quit, selected_quit = imgui.menu_item(
+			# 			"Quit", 'Cmd+Q', False, True
+			# 		)
+			#
+			# 		if clicked_quit:
+			# 			exit(1)
+			#
+			# 		imgui.end_menu()
+			# 	imgui.end_main_menu_bar()
+
+			# imgui.show_test_window()
+
+			imgui.set_next_window_position(0, 0)
+			imgui.set_next_window_size(200, 60)
+
+			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
+
+			changed, self.u_zoom = imgui.slider_float("Zoom", self.u_zoom, 1.0, 20.0)
+			if changed:
+				self.program.set_uniform(b'uZoom', self.u_zoom)
+
+			imgui.end()
+
 
 			glClear(GL_COLOR_BUFFER_BIT)
 			self._draw()
 
+			imgui.render()
+			self.impl.render(imgui.get_draw_data())
+
 			glfw.swap_buffers(self.window)
+
+
 
 	def _process(self, delta):
 		self.u_mpos += self.mvel * delta
@@ -94,7 +143,7 @@ def include_str(path):
 		return file.read()
 
 if __name__ == '__main__':
-	app = Application(900, 900)
+	app = Application(500, 500)
 	app.start()
 
 

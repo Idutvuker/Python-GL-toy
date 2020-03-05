@@ -8,7 +8,7 @@ out vec4 FragColor;
 void main()
 {
     vec2 uv = gl_FragCoord.xy / uResolution;
-    vec2 mp = uMousePos / uResolution;
+    vec2 mp = fract(uMousePos / uResolution);
     
     float c = length(uv - mp);
     
