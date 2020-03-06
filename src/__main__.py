@@ -71,7 +71,9 @@ class Application:
 		self.mvel = vec2(0, 0)
 
 		self.u_zoom = 1.0
-		self.u_alpha = 2000.0
+		self.u_alpha = 700.0
+		self.u_beta = 2.0
+		self.u_iters = 11
 
 
 	def __del__(self):
@@ -119,10 +121,17 @@ class Application:
 			if changed:
 				self.program.set_uniform(b'uZoom', self.u_zoom)
 
-			changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, 50.0, 5000.0)
+			changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, 30.0, 4000.0)
 			if changed:
 				self.program.set_uniform(b'uAlpha', self.u_alpha)
 
+			changed, self.u_beta = imgui.slider_float("Beta", self.u_beta, -10.0, 10.0)
+			if changed:
+				self.program.set_uniform(b'uBeta', self.u_beta)
+
+			changed, self.u_iters = imgui.slider_int("Iterations", self.u_iters, 1, 16)
+			if changed:
+				self.program.set_uniform(b'uIters', self.u_iters)
 
 			imgui.end()
 
