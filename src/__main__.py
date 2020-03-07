@@ -121,11 +121,11 @@ class Application:
 			if changed:
 				self.program.set_uniform(b'uZoom', self.u_zoom)
 
-			changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, 30.0, 4000.0)
+			changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, -3.14, 3.14)
 			if changed:
 				self.program.set_uniform(b'uAlpha', self.u_alpha)
 
-			changed, self.u_beta = imgui.slider_float("Beta", self.u_beta, -10.0, 10.0)
+			changed, self.u_beta = imgui.slider_float("Beta", self.u_beta, -3.14, 3.14)
 			if changed:
 				self.program.set_uniform(b'uBeta', self.u_beta)
 
@@ -160,5 +160,3 @@ def include_str(path):
 if __name__ == '__main__':
 	app = Application(500, 500)
 	app.start()
-
-
