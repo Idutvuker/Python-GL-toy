@@ -1,7 +1,9 @@
 from OpenGL.GL import *
-from OpenGL.GL.shaders import compileProgram
+from OpenGL.GL.shaders import compileProgram, compileShader
 from glm import *
 import sys
+
+from src.util import read_file_to_str
 
 class Program:
 	def use(self):
@@ -41,11 +43,25 @@ class Program:
 
 			self._uniforms[uname.value] = glGetUniformLocation(self.program, uname.value)
 
+
+	@staticmethod
+	def from_files(vs_path, fs_path):
+		vs_str = read_file_to_str(vs_path)
+		fs_str = read_file_to_str(fs_path)
+		return Program.from_strings(vs_str, fs_str)
+
+	@staticmethod
+	def from_strings(vs_str: str, fs_str: str):
+		vs = compileShader(vs_str, GL_VERTEX_SHADER)
+		fs = compileShader(fs_str, GL_FRAGMENT_SHADER)
+		return Program(vs, fs)
+
 	def __init__(self, vertex_shader, fragment_shader):
 		self.program = compileProgram(vertex_shader, fragment_shader)
 		glUseProgram(self.program)
 
 		self._get_uniform_map()
 
-	def __del__(self):
+	def delete(self):
 		glDeleteProgram(self.program)
+

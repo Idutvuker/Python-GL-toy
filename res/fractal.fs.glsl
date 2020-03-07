@@ -23,7 +23,7 @@ float sensitivity = 3.;
 
 float getDist(vec3 z)
 {
-	float pixsize = 1.0/uAlpha;
+	float pixsize = 1.0/600;
     float Scale = 2.0;
 
 	vec3 a1 = vec3(1,1,1);
@@ -133,6 +133,6 @@ void main()
 		c = 0.0;
 
 	vec3 col = vec3(c);
-    //vec3 col = getNormal(p);
+    vec3 col = getNormal(p);
     FragColor = vec4(col, 1.0);
 }
