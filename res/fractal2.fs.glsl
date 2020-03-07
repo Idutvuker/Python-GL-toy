@@ -20,37 +20,29 @@ const float spRad = 0.5;
 
 float sensitivity = 3.;
 
+float Scale = 1.7;
+vec3 Offset = vec3(-1, -1, -1);
 
-float getDist(vec3 z)
+
+
+float getDist(vec3 z, in mat3 rot)
 {
-	float pixsize = 1.0/uAlpha;
-    float Scale = 2.0;
-
-	vec3 a1 = vec3(1,1,1);
-	vec3 a2 = vec3(-1,-1,1);
-	vec3 a3 = vec3(1,-1,-1);
-	vec3 a4 = vec3(-1,1,-1);
-	vec3 c;
-	int n = 0;
-	float dist, d;
-
-	while (n < uIters)
-    {
-        c = a1;
-        dist = length(z-a1);
-        d = length(z-a2); if (d < dist) { c = a2; dist=d; }
-        d = length(z-a3); if (d < dist) { c = a3; dist=d; }
-        d = length(z-a4); if (d < dist) { c = a4; dist=d; }
-        z = Scale * (z - c);
-        n++;
+	float totalScale = 1.0;
+	for (int i = 0; i < uIters; i++)
+	{
+		z = abs(z);
+		z *= Scale;
+		z += Offset;
+		totalScale *= Scale;
+		z = rot * z;
 	}
 
-	return length(z) * pow(Scale, float(-n)) - pixsize;
+	return length(z) / totalScale - 0.1;
 }
 
 
 
-float rayMarch(vec3 ro, vec3 rd, int samples, out int it)
+float rayMarch(vec3 ro, vec3 rd, int samples, out int it, in mat3 rot)
 {
 	float dO = 0.0;
 
@@ -58,7 +50,7 @@ float rayMarch(vec3 ro, vec3 rd, int samples, out int it)
     for (int i = 0; i < samples; i++)
     {
         vec3 p = ro + rd * dO;
-        float ds = getDist(p);
+        float ds = getDist(p, rot);
         dO += ds;
         if (dO > MAX_DIST || ds < MIN_DIST) {
 			it = i;
@@ -115,8 +107,8 @@ mat3 rotationX( in float angle ) {
 
 void main()
 {
-    vec2 uv = (gl_FragCoord.xy-0.5*uResolution.xy)/uResolution.y;
-	vec2 mpos = uMousePos.xy / uResolution.y;
+		vec2 uv = (gl_FragCoord.xy-0.5*uResolution.xy)/uResolution.y;
+		vec2 mpos = uMousePos.xy / uResolution.y;
 
     mat3 rotY = rotationY(-mpos.x * sensitivity);
     mat3 rotX = rotationX(mpos.y * sensitivity);
@@ -124,15 +116,19 @@ void main()
     vec3 ro = rotY * rotX * vec3(0, 0, -5.5);
     vec3 rd = rotY * rotX * normalize(vec3(uv.x, uv.y, uZoom));
 
-	int it = 0;
-    float d = rayMarch(ro, rd, MAX_STEPS, it);
+		mat3 rot = mat3(1);
+		rot = rotationX(uAlpha) * rot;
+		rot = rotationY(uBeta) * rot;
+
+		int it = 0;
+    float d = rayMarch(ro, rd, MAX_STEPS, it, rot);
     vec3 p = ro + rd * d;
 
-	float c = 1.0 - float(it) / float(MAX_STEPS);
-	if (it == 0)
-		c = 0.0;
+		float c = 1.0 - float(it) / float(MAX_STEPS);
+		if (it == 0)
+			c = 0.0;
 
-	vec3 col = vec3(c);
+		vec3 col = vec3(c);
     //vec3 col = getNormal(p);
     FragColor = vec4(col, 1.0);
 }
