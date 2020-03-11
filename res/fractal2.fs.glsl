@@ -22,15 +22,17 @@ const float spRad = 0.5;
 
 float sensitivity = 3.;
 
-float Scale = 1.7;
+float Scale = 1.5;
 vec3 Offset = vec3(-1, -0.1, -0.5);
-
 
 mat3 rot;
 
-float getDist(vec3 z)
+vec4 getDist(vec3 z)
 {
 	float totalScale = 1.0;
+	
+	vec3 orbit = vec3(0);
+	
 	for (int i = 0; i < uIters; i++)
 	{
 		z = abs(z);
@@ -38,22 +40,32 @@ float getDist(vec3 z)
 		z += Offset;
 		totalScale *= Scale;
 		z = rot * z;
+		
+		orbit += z * 0.1;
+		//orbit = max(z, orbit);
+		//orbit = min(z, orbit);
 	}
-
-	return length(z) / totalScale - 0.05;
+	
+	float dist = length(z) / totalScale - 0.005;
+	
+	return vec4(dist, orbit);
 }
 
 
 
-float rayMarch(vec3 ro, vec3 rd, int samples, out int it)
+vec4 rayMarch(vec3 ro, vec3 rd, int samples, out int it)
 {
 	float dO = 0.0;
-
+	
+	vec3 col;
+	
 	bool flag = false;
 	for (int i = 0; i < samples; i++)
 	{
 		vec3 p = ro + rd * dO;
-		float ds = getDist(p);
+		vec4 d_col = getDist(p);
+		col = d_col.yzw;
+		float ds = d_col.x;
 		dO += ds;
 		if (dO > MAX_DIST || ds < MIN_DIST) {
 			it = i;
@@ -64,7 +76,7 @@ float rayMarch(vec3 ro, vec3 rd, int samples, out int it)
 	if (!flag)
 		it = samples;
 
-	return dO;
+	return vec4(dO, col);
 }
 
 //vec3 getNormal(vec3 p)
@@ -132,14 +144,21 @@ void main()
 	rot = rotationZ(uGamma) * rot;
 
 	int it = 0;
-	float d = rayMarch(ro, rd, MAX_STEPS, it);
+	vec4 d_col = rayMarch(ro, rd, MAX_STEPS, it);
+	float d = d_col.x;
 	vec3 p = ro + rd * d;
-
+	
+	vec3 col = vec3(0.1);
+	if (d < MAX_DIST)
+		col = clamp(d_col.yzw, 0.0, 1.0);
+	
 	float c = 1.0 - float(it) / float(MAX_STEPS);
 	if (it == 0)
 		c = 0.0;
-
-	vec3 col = vec3(c);
+	
+	col *= c;
+//
+//	vec3 col = vec3(c);
 	//col = getNormal(p);
 	FragColor = vec4(col, 1.0);
 }

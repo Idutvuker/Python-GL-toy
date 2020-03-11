@@ -4,5 +4,5 @@ from .Application import *
 if __name__ == '__main__':
 	app = Application(500, 500)
 	with app:
-		print(123)
+		pass
 
