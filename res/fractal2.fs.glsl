@@ -2,9 +2,6 @@
 
 out vec4 FragColor;
 
-uniform float uZoom = 1.0;
-uniform int uIters = 11;
-
 const float iTime = 0.0;
 
 const int MAX_STEPS = 70;
@@ -40,7 +37,7 @@ vec4 getDist(vec3 z)
 		//orbit = min(z, orbit);
 	}
 	
-	float dist = length(z) / totalScale - 0.007;
+	float dist = length(z) / totalScale - uRadius;
 	
 	return vec4(dist, orbit);
 }

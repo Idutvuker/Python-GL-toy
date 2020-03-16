@@ -5,6 +5,7 @@ import sys
 import json
 
 from src.common.Uniform import Uniform
+from src.gui.Controls import Control
 
 from src.util import read_file_to_str
 
@@ -84,13 +85,14 @@ class Program:
 					uname = uni[0]
 					utype = uni[1]["type"]
 					value = uni[1].get("value", None)
+					export = uni[1].get("export", None)
+
 					if value is None:
 						res.append("uniform {type} {name};".format(type=utype, name=uname))
 					else:
 						res.append("uniform {type} {name} = {val};".format(type=utype, name=uname, val=value))
 
-					uni_defs.append((utype, uname, value))
-					#uniforms[uni[0]] = Uniform(-1, utype, uname, value)
+					uni_defs.append((utype, uname, value, export))
 
 
 			res.append(spl[1])
@@ -111,11 +113,17 @@ class Program:
 		glUseProgram(self.program)
 
 		self.uniforms = {}
+		self.controls = []
 
 		if uni_defs:
 			for udef in uni_defs:
-				self.uniforms[udef[1]] = Uniform(self.program, *udef)
-		#self._create_uniform_map()
+				uni = Uniform(self.program, udef[0], udef[1], udef[2])
+				self.uniforms[udef[1]] = uni
+
+				export = udef[3]
+				if export:
+					self.controls.append(Control(export, uni, udef[0]))
+
 
 	def delete(self):
 		glDeleteProgram(self.program)

@@ -8,6 +8,38 @@
 			"type": "vec2"
 		},
 		
+		
+		"uIters": {
+			"type": "int",
+			"value": 12,
+			"export": {
+				"min": 1,
+				"max": 18,
+				"name": "Iters"
+			}
+		},
+		
+		
+		"uZoom": {
+			"type": "float",
+			"value": 1.0,
+			"export": {
+				"min": 0.5,
+				"max": 20.0,
+				"name": "Zoom"
+			}
+		},
+		
+		"uRadius": {
+			"type": "float",
+			"value": 0.007,
+			"export": {
+				"min": 0.0005,
+				"max": 0.1,
+				"name": "Radius"
+			}
+		},
+		
 		"uAlpha": {
 			"type": "float",
 			"value": 0.0,
@@ -35,16 +67,6 @@
 				"max": 3.14,
 				"name": "Gamma"
 			}
-		}
-	},
-	
-	"comment": {
-		"uMousePos": {
-			"type": "float",
-			"value": 0.0
-		},
-		"uZoom": {
-			"type": "float"
 		}
 	}
 }

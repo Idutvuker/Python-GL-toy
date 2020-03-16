@@ -97,46 +97,34 @@ class Application:
 
 			imgui.new_frame()
 
-			# if imgui.begin_main_menu_bar():
-			# 	if imgui.begin_menu("File", True):
-			#
-			# 		clicked_quit, selected_quit = imgui.menu_item(
-			# 			"Quit", 'Cmd+Q', False, True
-			# 		)
-			#
-			# 		if clicked_quit:
-			# 			exit(1)
-			#
-			# 		imgui.end_menu()
-			# 	imgui.end_main_menu_bar()
-
-			# imgui.show_test_window()
-
 			imgui.set_next_window_position(0, 0)
 			imgui.set_next_window_size(220, 160)
 
 			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE)
 
-			changed, self.u_zoom = imgui.slider_float("Zoom", self.u_zoom, 1.0, 20.0)
-			if changed:
-				self.program.set_uniform(b'uZoom', self.u_zoom)
+			for cont in self.program.controls:
+				cont.update()
 
-
-			changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, -3.14, 3.14)
-			if changed:
-				self.program.set_uniform(b'uAlpha', self.u_alpha)
-
-			changed, self.u_beta = imgui.slider_float("Beta", self.u_beta, -3.14, 3.14)
-			if changed:
-				self.program.set_uniform(b'uBeta', self.u_beta)
-
-			changed, self.u_gamma = imgui.slider_float("Gamma", self.u_gamma, -3.14, 3.14)
-			if changed:
-				self.program.set_uniform(b'uGamma', self.u_gamma)
-
-			changed, self.u_iters = imgui.slider_int("Iterations", self.u_iters, 1, 16)
-			if changed:
-				self.program.set_uniform(b'uIters', self.u_iters)
+			# changed, self.u_zoom = imgui.slider_float("Zoom", self.u_zoom, 1.0, 20.0)
+			# if changed:
+			# 	self.program.set_uniform(b'uZoom', self.u_zoom)
+			#
+			#
+			# changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, -3.14, 3.14)
+			# if changed:
+			# 	self.program.set_uniform(b'uAlpha', self.u_alpha)
+			#
+			# changed, self.u_beta = imgui.slider_float("Beta", self.u_beta, -3.14, 3.14)
+			# if changed:
+			# 	self.program.set_uniform(b'uBeta', self.u_beta)
+			#
+			# changed, self.u_gamma = imgui.slider_float("Gamma", self.u_gamma, -3.14, 3.14)
+			# if changed:
+			# 	self.program.set_uniform(b'uGamma', self.u_gamma)
+			#
+			# changed, self.u_iters = imgui.slider_int("Iterations", self.u_iters, 1, 16)
+			# if changed:
+			# 	self.program.set_uniform(b'uIters', self.u_iters)
 
 			imgui.end()
 
