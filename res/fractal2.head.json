@@ -1,0 +1,50 @@
+{
+	"uniforms": {
+		"uResolution": {
+			"type": "ivec2"
+		},
+		
+		"uMousePos": {
+			"type": "vec2"
+		},
+		
+		"uAlpha": {
+			"type": "float",
+			"value": 0.0,
+			"export": {
+				"min": -3.14,
+				"max": 3.14,
+				"name": "Alpha"
+			}
+		},
+		
+		"uBeta": {
+			"type": "float",
+			"value": 0.0,
+			"export": {
+				"min": -3.14,
+				"max": 3.14,
+				"name": "Beta"
+			}
+		},
+		"uGamma": {
+			"type": "float",
+			"value": 0.0,
+			"export": {
+				"min": -3.14,
+				"max": 3.14,
+				"name": "Gamma"
+			}
+		}
+	},
+	
+	"comment": {
+		"uMousePos": {
+			"type": "float",
+			"value": 0.0
+		},
+		"uZoom": {
+			"type": "float"
+		}
+	}
+}

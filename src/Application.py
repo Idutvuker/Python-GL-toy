@@ -8,6 +8,12 @@ from imgui.integrations.glfw import GlfwRenderer
 from src.common import Program
 
 class Application:
+	class UniformHolder:
+		def __init__(self, program: Program):
+			self.resolution = program.get_uniform("uResolution")
+			self.mousePos = program.get_uniform("uMousePos")
+
+
 	def _draw(self):
 		glDrawArrays(GL_QUADS, 0, 4)
 
@@ -15,7 +21,8 @@ class Application:
 		self.width = w
 		self.height = h
 
-		self.program.set_uniform(b'uResolution', ivec2(w, h))
+		self.uniHolder.resolution.set_update(ivec2(w, h))
+
 		glViewport(0, 0, w, h)
 
 	def _on_mouse_move(self, window, x, y):
@@ -51,7 +58,6 @@ class Application:
 		self._init_window(width, height)
 
 		self.program = Program.from_files("res/test.vs.glsl", "res/fractal2.fs.glsl")
-		self._on_resize(self.window, width, height)
 
 		self.prev_mpos = vec2(0, 0)
 		self.u_mpos = vec2(0, 0)
@@ -59,12 +65,16 @@ class Application:
 		self.prev_time = glfw.get_time()
 		self.mvel = vec2(0, 0)
 
+		self.uniHolder = Application.UniformHolder(self.program)
+
 		self.u_zoom = 1.0
 		self.u_alpha = 0.0
 		self.u_beta = 0.0
 		self.u_gamma = 0.0
 
 		self.u_iters = 11
+
+		self._on_resize(self.window, width, height)
 
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
@@ -103,9 +113,9 @@ class Application:
 			# imgui.show_test_window()
 
 			imgui.set_next_window_position(0, 0)
-			imgui.set_next_window_size(200, 160)
+			imgui.set_next_window_size(220, 160)
 
-			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_COLLAPSE)
+			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE)
 
 			changed, self.u_zoom = imgui.slider_float("Zoom", self.u_zoom, 1.0, 20.0)
 			if changed:
@@ -143,7 +153,7 @@ class Application:
 
 	def _process(self, delta):
 		self.u_mpos += self.mvel * delta
-		self.program.set_uniform(b'uMousePos', self.u_mpos)
+		self.uniHolder.mousePos.set_update(self.u_mpos)
 
 		x = pow(0.03, delta)
 		self.mvel *= x

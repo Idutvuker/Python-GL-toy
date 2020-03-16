@@ -1,14 +1,8 @@
-#version 330 core
+#header "res\fractal2.head.json"
 
 out vec4 FragColor;
 
-uniform vec2 uMousePos;
-uniform ivec2 uResolution;
 uniform float uZoom = 1.0;
-uniform float uAlpha = 0.0;
-uniform float uBeta = 0.0;
-uniform float uGamma = 0.0;
-
 uniform int uIters = 11;
 
 const float iTime = 0.0;
@@ -46,7 +40,7 @@ vec4 getDist(vec3 z)
 		//orbit = min(z, orbit);
 	}
 	
-	float dist = length(z) / totalScale - 0.005;
+	float dist = length(z) / totalScale - 0.007;
 	
 	return vec4(dist, orbit);
 }
