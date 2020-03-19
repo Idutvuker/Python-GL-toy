@@ -41,7 +41,7 @@ class Application:
 	def _init_window(self, width, height):
 		if not glfw.init():
 			raise Exception("glfw can not be initialized!")
-		self.window = glfw.create_window(width, height, "My OpenGL window", None, None)
+		self.window = glfw.create_window(width, height, "Toy", None, None)
 
 		if not self.window:
 			raise Exception("glfw window can not be created!")
@@ -99,9 +99,11 @@ class Application:
 			imgui.new_frame()
 
 			imgui.set_next_window_position(0, 0)
-			imgui.set_next_window_size(220, 180)
+			imgui.set_next_window_size(280, 180)
 
-			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE)
+			imgui.begin("Uniforms", False, imgui.WINDOW_NO_RESIZE)
+
+			imgui.push_item_width(-45)
 
 			for cont in self.program.controls:
 				cont.update()
