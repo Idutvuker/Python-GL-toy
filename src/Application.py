@@ -35,6 +35,9 @@ class Application:
 			self.mvel += 3.0 * diff / self.uniHolder.zoom.value
 
 
+	def _on_scroll(self, window, x, y):
+		self.zm_vel = y / 10.0
+
 	def _init_window(self, width, height):
 		if not glfw.init():
 			raise Exception("glfw can not be initialized!")
@@ -49,6 +52,7 @@ class Application:
 
 		glfw.set_window_size_callback(self.window, self._on_resize)
 		glfw.set_cursor_pos_callback(self.window, self._on_mouse_move)
+		glfw.set_scroll_callback(self.window, self._on_scroll)
 
 		imgui.create_context()
 		self.impl = GlfwRenderer(self.window, False)
@@ -58,13 +62,14 @@ class Application:
 	def __init__(self, width, height):
 		self._init_window(width, height)
 
-		self.program = Program.from_files("res/test.vs.glsl", "res/test.fs.glsl")
+		self.program = Program.from_files("res/test.vs.glsl", "res/fractal2.fs.glsl")
 
 		self.prev_mpos = vec2(0, 0)
 		self.u_mpos = vec2(0, 0)
 
 		self.prev_time = glfw.get_time()
 		self.mvel = vec2(0, 0)
+		self.zm_vel = 0.0
 
 		self.uniHolder = Application.UniformHolder(self.program)
 
@@ -99,26 +104,6 @@ class Application:
 			for cont in self.program.controls:
 				cont.update()
 
-			# changed, self.u_zoom = imgui.slider_float("Zoom", self.u_zoom, 1.0, 20.0)
-			# if changed:
-			# 	self.program.set_uniform(b'uZoom', self.u_zoom)
-			#
-			#
-			# changed, self.u_alpha = imgui.slider_float("Alpha", self.u_alpha, -3.14, 3.14)
-			# if changed:
-			# 	self.program.set_uniform(b'uAlpha', self.u_alpha)
-			#
-			# changed, self.u_beta = imgui.slider_float("Beta", self.u_beta, -3.14, 3.14)
-			# if changed:
-			# 	self.program.set_uniform(b'uBeta', self.u_beta)
-			#
-			# changed, self.u_gamma = imgui.slider_float("Gamma", self.u_gamma, -3.14, 3.14)
-			# if changed:
-			# 	self.program.set_uniform(b'uGamma', self.u_gamma)
-			#
-			# changed, self.u_iters = imgui.slider_int("Iterations", self.u_iters, 1, 16)
-			# if changed:
-			# 	self.program.set_uniform(b'uIters', self.u_iters)
 
 			imgui.end()
 
@@ -137,5 +122,9 @@ class Application:
 		self.u_mpos += self.mvel * delta
 		self.uniHolder.mousePos.set_update(self.u_mpos)
 
+		self.uniHolder.zoom.value += self.zm_vel
+		self.uniHolder.zoom.update()
+
 		x = pow(0.03, delta)
 		self.mvel *= x
+		self.zm_vel *= x
