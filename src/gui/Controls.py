@@ -5,11 +5,12 @@ class Control:
 		self.name = export["name"]
 		self.min = export["min"]
 		self.max = export["max"]
+		self.power = export.get("power", 1.0)
 
 		self.uniform = uniform
 
 		self._draw = {
-			"float": lambda: imgui.slider_float(self.name, self.uniform.value, self.min, self.max),
+			"float": lambda: imgui.slider_float(self.name, self.uniform.value, self.min, self.max, "%.3f", self.power),
 			"int": lambda: imgui.slider_int(self.name, self.uniform.value, self.min, self.max)
 		}[type_str]
 

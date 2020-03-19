@@ -1,0 +1,44 @@
+{
+	"uniforms": {
+		"uResolution": {
+			"type": "ivec2"
+		},
+		
+		"uMousePos": {
+			"type": "vec2"
+		},
+		
+		"uRadius": {
+			"type": "float",
+			"value": 2.0,
+			"export": {
+				"min": 1.0,
+				"max": 50.0,
+				"name": "Radius"
+			}
+		},
+		
+		"uZoom": {
+			"type": "float",
+			"value": 0.5,
+			"export": {
+				"min": 0.5,
+				"max": 1000.00,
+				"name": "Zoom",
+				"power": 3.0
+			}
+		}
+	},
+	
+	"comment": {
+		"uGamma": {
+			"type": "float",
+			"value": 0.0,
+			"export": {
+				"min": -3.14,
+				"max": 3.14,
+				"name": "Gamma"
+			}
+		}
+	}
+}

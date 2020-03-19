@@ -12,6 +12,7 @@ class Application:
 		def __init__(self, program: Program):
 			self.resolution = program.get_uniform("uResolution")
 			self.mousePos = program.get_uniform("uMousePos")
+			self.zoom = program.get_uniform("uZoom")
 
 
 	def _draw(self):
@@ -31,7 +32,7 @@ class Application:
 		self.prev_mpos = mpos
 
 		if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS and not imgui.get_io().want_capture_mouse:
-			self.mvel += 3.0 * diff
+			self.mvel += 3.0 * diff / self.uniHolder.zoom.value
 
 
 	def _init_window(self, width, height):
@@ -57,7 +58,7 @@ class Application:
 	def __init__(self, width, height):
 		self._init_window(width, height)
 
-		self.program = Program.from_files("res/test.vs.glsl", "res/fractal2.fs.glsl")
+		self.program = Program.from_files("res/test.vs.glsl", "res/test.fs.glsl")
 
 		self.prev_mpos = vec2(0, 0)
 		self.u_mpos = vec2(0, 0)
@@ -66,13 +67,6 @@ class Application:
 		self.mvel = vec2(0, 0)
 
 		self.uniHolder = Application.UniformHolder(self.program)
-
-		self.u_zoom = 1.0
-		self.u_alpha = 0.0
-		self.u_beta = 0.0
-		self.u_gamma = 0.0
-
-		self.u_iters = 11
 
 		self._on_resize(self.window, width, height)
 
@@ -98,7 +92,7 @@ class Application:
 			imgui.new_frame()
 
 			imgui.set_next_window_position(0, 0)
-			imgui.set_next_window_size(220, 160)
+			imgui.set_next_window_size(220, 180)
 
 			imgui.begin("Custom window", False, imgui.WINDOW_NO_RESIZE)
 
