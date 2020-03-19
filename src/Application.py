@@ -36,7 +36,7 @@ class Application:
 
 
 	def _on_scroll(self, window, x, y):
-		self.zm_vel = y / 10.0
+		self.zm_vel = y * 3.0
 
 	def _init_window(self, width, height):
 		if not glfw.init():
@@ -69,6 +69,8 @@ class Application:
 
 		self.prev_time = glfw.get_time()
 		self.mvel = vec2(0, 0)
+
+		self.zoom = 0.0
 		self.zm_vel = 0.0
 
 		self.uniHolder = Application.UniformHolder(self.program)
@@ -122,9 +124,9 @@ class Application:
 		self.u_mpos += self.mvel * delta
 		self.uniHolder.mousePos.set_update(self.u_mpos)
 
-		self.uniHolder.zoom.value += self.zm_vel
+		self.uniHolder.zoom.value += self.zm_vel * delta
 		self.uniHolder.zoom.update()
 
-		x = pow(0.03, delta)
+		x = pow(0.002, delta)
 		self.mvel *= x
 		self.zm_vel *= x
