@@ -38,10 +38,15 @@ class Application:
 	def _on_scroll(self, window, x, y):
 		self.zm_vel = y * 3.0
 
-	def _init_window(self, width, height):
+	def _init_window(self, width, height, fullscreen):
 		if not glfw.init():
 			raise Exception("glfw can not be initialized!")
-		self.window = glfw.create_window(width, height, "Toy", None, None)
+
+		monitor = None
+		if fullscreen:
+			monitor = glfw.get_primary_monitor()
+
+		self.window = glfw.create_window(width, height, "Toy", monitor, None)
 
 		if not self.window:
 			raise Exception("glfw window can not be created!")
@@ -59,10 +64,10 @@ class Application:
 
 
 
-	def __init__(self, width, height):
-		self._init_window(width, height)
+	def __init__(self, fs_path: str, width, height, fullscreen=False):
+		self._init_window(width, height, fullscreen)
 
-		self.program = Program.from_files("res/test.vs.glsl", "res/fractal2.fs.glsl")
+		self.program = Program.from_files("res/base.vs.glsl", fs_path)
 
 		self.prev_mpos = vec2(0, 0)
 		self.u_mpos = vec2(0, 0)

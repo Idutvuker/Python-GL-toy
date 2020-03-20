@@ -1,13 +1,6 @@
-#version 330 core
+#header "res\sierpinski.head.json"
 
 out vec4 FragColor;
-
-uniform vec2 uMousePos;
-uniform ivec2 uResolution;
-uniform float uZoom = 1.0;
-uniform float uAlpha = 700.0;
-uniform float uBeta = 2.0;
-uniform int uIters = 11;
 
 const float iTime = 0.0;
 
@@ -23,7 +16,6 @@ float sensitivity = 3.;
 
 float getDist(vec3 z)
 {
-	float pixsize = 1.0/600;
     float Scale = 2.0;
 
 	vec3 a1 = vec3(1,1,1);
@@ -45,7 +37,7 @@ float getDist(vec3 z)
         n++;
 	}
 
-	return length(z) * pow(Scale, float(-n)) - pixsize;
+	return length(z) * pow(Scale, float(-n)) - uRadius;
 }
 
 
@@ -133,6 +125,6 @@ void main()
 		c = 0.0;
 
 	vec3 col = vec3(c);
-    vec3 col = getNormal(p);
+    //vec3 col = getNormal(p);
     FragColor = vec4(col, 1.0);
 }

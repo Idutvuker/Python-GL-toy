@@ -10,7 +10,7 @@ class Control:
 		self.uniform = uniform
 
 		self._draw = {
-			"float": lambda: imgui.slider_float(self.name, self.uniform.value, self.min, self.max, "%.3f", self.power),
+			"float": lambda: imgui.slider_float(self.name, self.uniform.value, self.min, self.max, "%.5f", self.power),
 			"int": lambda: imgui.slider_int(self.name, self.uniform.value, self.min, self.max)
 		}[type_str]
 

@@ -23,9 +23,29 @@
 			"value": 0.5,
 			"export": {
 				"min": 0.5,
-				"max": 1000.00,
+				"max": 100000.00,
 				"name": "Zoom",
-				"power": 3.0
+				"power": 6.0
+			}
+		},
+		
+		"uIters": {
+			"type": "int",
+			"value": 512,
+			"export": {
+				"min": 1,
+				"max": 1000,
+				"name": "Iters"
+			}
+		},
+		
+		"uGamma": {
+			"type": "float",
+			"value": 0.1,
+			"export": {
+				"min": 0.001,
+				"max": 0.2,
+				"name": "Gamma"
 			}
 		}
 	},

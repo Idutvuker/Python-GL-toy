@@ -24,11 +24,16 @@ vec4 getDist(vec3 z)
 	
 	vec3 orbit = vec3(0);
 	
+	//z = abs(mod(z, 10.0) - 5.0);
+	
+	float d = 0.0;
+	
 	for (int i = 0; i < uIters; i++)
 	{
 		z = abs(z);
 		z *= Scale;
 		z += Offset;
+		
 		totalScale *= Scale;
 		z = rot * z;
 		
@@ -37,11 +42,23 @@ vec4 getDist(vec3 z)
 		//orbit = min(z, orbit);
 	}
 	
-	float dist = length(z) / totalScale - uRadius;
+	
+	d = max(z.x, max(z.y, z.z));
+	//d = length(z);
+	
+	float dist = d / totalScale - uRadius;
+	//float dist = length(z) / totalScale - uRadius;
 	
 	return vec4(dist, orbit);
 }
 
+
+vec4 getDist2(vec3 p) {
+	
+	p = abs(mod(p, 2.0) - 1.0);
+	
+	return vec4(max(p.x, max(p.y, p.z)) - 0.3, vec3(0.3));
+}
 
 
 vec4 rayMarch(vec3 ro, vec3 rd, int samples, out int it)
