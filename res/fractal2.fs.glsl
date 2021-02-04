@@ -43,8 +43,8 @@ vec4 getDist(vec3 z)
 	}
 	
 	
-	d = max(z.x, max(z.y, z.z));
-	//d = length(z);
+	//d = max(z.x, max(z.y, z.z));
+	d = length(z);
 	
 	float dist = d / totalScale - uRadius;
 	//float dist = length(z) / totalScale - uRadius;
